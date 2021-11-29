@@ -35,6 +35,63 @@ function loadOverview(data) {
     }
 }
 
+function loadViewDataOptions(data) {
+    $("#view-data-list").html(`
+        <li class="nav-item view-data-option" value="Overview">
+            <button class="nav-link active d-flex" aria-current="page">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                </svg>
+                <p class="m-0 ps-2">Overview</p>
+            </button>
+        </li>
+    `)
+
+    let distinctTypes = [...new Set(data.map(row => row.Type))]
+    distinctTypes.map((type) => {
+        $("#view-data-list").append(`
+            <li class="nav-item view-data-option" value="${type}">
+                <button class="nav-link d-flex" aria-current="page">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <p class="m-0 ps-2">${type}</p>
+                </button>
+            </li>
+        `)
+    })
+}
+
+function loadLineGraph(data, type) {
+    $("#line-graph-container").html("<canvas id='line-graph' class='w-100' style='height: 26rem;'></canvas>")
+    var dateArray = [], dataArray = []
+
+    data.map((row) => {
+        if (row["Type"] == type) { 
+            dateArray.push(row["Date"])
+            dataArray.push(row["Price"])
+        }
+    })
+
+    new Chart(document.getElementById('line-graph').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: dateArray,
+            datasets: [{
+                label: type,
+                data: dataArray,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    })
+}
+
 function loadTrackOptions(data) {
     if (data) {
         $("#track-options").removeAttr("disabled")
@@ -72,13 +129,19 @@ function addToSavedTracklist(data, type) {
 }
 
 function addCardToTracklist(data, type) {
-    var todayTotal = 0
-    let yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
-    var yesterdayTotal = 0
+    let today = new Date().toLocaleDateString('en-SG')
+    let yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('en-SG')
+    var todayTotal = 0, yesterdayTotal = 0
 
-    if (new Date(data["Date"]).toLocaleDateString('en-SG') == new Date().toLocaleDateString('en-SG')) todayTotal += parseInt(data[type])
-
-    else if (new Date(data["Date"]).toLocaleDateString('en-SG') == yesterday.toLocaleDateString('en-SG')) yesterdayTotal += parseInt(data[type])
+    data.map((data) => {
+        if (data["Type"] == type && new Date(data["Date"]).toLocaleDateString('en-SG') == today) {
+            todayTotal += parseInt(data["Price"])
+        }
+    
+        else if (data["Type"] == type && new Date(data["Date"]).toLocaleDateString('en-SG') == yesterday) {
+            yesterdayTotal += parseInt(data["Price"])
+        }
+    })
 
     let total = todayTotal - yesterdayTotal
     var cardHTML = `<div class="card mt-3 track-card" value="${type}">
@@ -88,8 +151,8 @@ function addCardToTracklist(data, type) {
                                 <h4 class="m-0">$${todayTotal}</h4>`
 
     if (total < 0) {
-        cardHTML += `<div class="d-flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" class="text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        cardHTML += `<div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1rem" weight="1rem" class="text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>
                         <p class="text-danger m-0"> ${total}</p>
@@ -101,8 +164,8 @@ function addCardToTracklist(data, type) {
     }
 
     else {
-        cardHTML += `<div class="d-flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" class="text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        cardHTML += `<div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1rem" weight="1rem" class="text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                         </svg>
                         <p class="text-success m-0"> +${total}</p>
@@ -152,8 +215,26 @@ $(document).ready(function() {
                 let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
 
                 loadOverview(data)
+                loadViewDataOptions(data)
                 loadTrackOptions(data)
                 loadTracklist(data)
+
+                $("#view-data-list").on("click", ".view-data-option", (e) => {
+                    let type = e.currentTarget.attributes[1].value
+                    $(".view-data-option").children().removeClass("active")
+                    $(e.currentTarget).children().addClass("active")
+
+                    if (type == "Overview") {
+                        $("#line-graph-container").hide()
+                        $("#overview-graph").show()
+                    }
+
+                    else {
+                        $("#overview-graph").hide()
+                        $("#line-graph-container").show()
+                        loadLineGraph(data, type)
+                    }
+                })
 
                 $("#add-to-track-button").on("click", () => {
                     addToSavedTracklist(data, $("#track-options").val())

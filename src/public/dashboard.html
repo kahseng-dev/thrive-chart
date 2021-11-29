@@ -10,7 +10,7 @@
 </head>
 <body>
     <main>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed w-100">
             <div class="container-fluid">
               <a class="navbar-brand fw-bold" href="#">ThriveChart</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,24 +24,15 @@
               </div>
             </div>
         </nav>
+        
+        <nav class="col-lg-2 d-lg-flex bg-light flex-column collapse position-fixed" style="top: 3.5rem; bottom: 0px">
+            <h6 class="m-3 text-muted">View Data Options</h6>
+            <ul id="view-data-list" class="nav nav-pills nav-fill d-flex flex-column mx-3"></ul>
+        </nav>
 
-        <div class="row m-0">
-            <nav class="col-lg-2 d-lg-flex bg-light flex-column flex-shrink-0 collapse" style="height: 92vh;">
-                <div>
-                    <ul class="nav m-2 mt-3">
-                        <li class="nav-item">
-                            <a class="nav-link p-0 active d-flex" aria-current="page" href="https://getbootstrap.com/docs/5.1/examples/dashboard/#">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                </svg>
-                                <p class="m-0 ps-2">Overview</p>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <div class="col-lg-10">
+        <div class="row" style="--bs-gutter-x: 0; padding-top: 3.5rem;">
+            <div class="col-lg-2 p-0"></div>
+            <div class="col p-0">
                 <div class="m-3">
                     <div class="d-flex justify-content-between">
                         <h2 class="m-0">Dashboard</h2>
