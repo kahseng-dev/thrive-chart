@@ -1,5 +1,6 @@
 function loadOverview(data) {
     if (data) {
+        $("#data-title").text("Overview")
         var totalAssets = 0, totalLiabilities = 0, totalExpenses = 0
 
         data.map((row) => {
@@ -36,7 +37,7 @@ function loadOverview(data) {
 }
 
 function loadViewDataOptions(data) {
-    $("#view-data-list").html(`
+    $(".view-data-list").html(`
         <li class="nav-item view-data-option" value="Overview">
             <button class="nav-link active d-flex" aria-current="page">
                 <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,13 +51,13 @@ function loadViewDataOptions(data) {
 
     let distinctTypes = [...new Set(data.map(row => row.Type))]
     distinctTypes.map((type) => {
-        $("#view-data-list").append(`
+        $(".view-data-list").append(`
             <li class="nav-item view-data-option" value="${type}">
                 <button class="nav-link d-flex" aria-current="page">
                     <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" weight="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
-                    <p class="m-0 ps-2">${type}</p>
+                    <p class="m-0 ps-2 text-nowrap">${type}</p>
                 </button>
             </li>
         `)
@@ -64,6 +65,7 @@ function loadViewDataOptions(data) {
 }
 
 function loadLineGraph(data, type) {
+    $("#data-title").text(type)
     $("#line-graph-container").html("<canvas id='line-graph' class='w-100' style='height: 26rem;'></canvas>")
     var dateArray = [], dataArray = []
 
@@ -87,7 +89,7 @@ function loadLineGraph(data, type) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true
+            maintainAspectRatio: false
         }
     })
 }
@@ -219,7 +221,7 @@ $(document).ready(function() {
                 loadTrackOptions(data)
                 loadTracklist(data)
 
-                $("#view-data-list").on("click", ".view-data-option", (e) => {
+                $(".view-data-list").on("click", ".view-data-option", (e) => {
                     let type = e.currentTarget.attributes[1].value
                     $(".view-data-option").children().removeClass("active")
                     $(e.currentTarget).children().addClass("active")
