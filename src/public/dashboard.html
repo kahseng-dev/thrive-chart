@@ -44,16 +44,35 @@
             <div class="col-lg-10">
                 <div class="m-3">
                     <div class="d-flex justify-content-between">
-                    <h2 class="m-0">Dashboard</h2>
-                    <div class="btn-toolbar">
-                        <input type="file" id="real-upload-button" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden="hidden" />
-                        <button type="button" id="upload-button" class="btn btn-success">Upload Excel</button>
-                    </div>
+                        <h2 class="m-0">Dashboard</h2>
+                        <div class="btn-toolbar">
+                            <input type="file" id="real-upload-button" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden="hidden" />
+                            <button type="button" id="upload-button" class="btn btn-success">Upload Excel</button>
+                        </div>
                     </div>
                     <hr/>
-                    <div>
-                        <canvas id="overview-graph" class="mb-4 mb-md-0" style="max-height: 26rem"></canvas>
-                        <div id="line-graph-container"></div>
+                    <div class="row gap-3 m-0">
+                        <div class="col-8 p-0">
+                            <h4>Overview</h4>
+                            <div class="bg-light rounded border border-secondary p-3">
+                                <canvas id="overview-graph" style="max-height: 20rem"></canvas>
+                                <div id="line-graph-container"></div>
+                            </div>
+                        </div>
+                        <div class="col p-0">
+                            <h4>Track List</h4>
+                            <div class="bg-light rounded border border-secondary p-3">
+                                <div class="d-flex">
+                                    <select class="form-select" id="track-options" disabled></select>
+                                    <button class="btn btn-primary ms-2" id="add-to-track-button" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" width="1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div id="track-list"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
