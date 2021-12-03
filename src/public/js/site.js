@@ -50,20 +50,48 @@ $(document).ready(() => {
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
-    
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            $("#nav-account").html(`
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Hi <span id="nav-account-user"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button id="sign-out" class="btn btn-outline-light">
+                        Sign Out
+                    </button>
+                </li>
+            `)
+            
             const uid = user.uid;
-            console.log(uid)
+            
+            $("#sign-out").on("click", () => {
+                auth.signOut();
+            })
         } 
         
         else {
-            $("#login-form").on("submit", (e) => {
-                e.preventDefault()
-                let email = $("#login-email").val()
-                let password = $("#login-password").val()
-                login(email, password)
-            })
+            $("#nav-account").html(`
+                <li class="nav-item">
+                    <a class="nav-link" href="./signup.html">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Sign Up</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" href="./login.html">
+                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Login</span>
+                        </a>
+                </li>
+            `)
         }
     })
 })

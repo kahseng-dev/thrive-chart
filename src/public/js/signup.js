@@ -27,7 +27,6 @@ $(document).ready(() => {
             $("#signup-status").removeClass("text-danger")
             $("#signup-status").addClass("text-success")
             $("#signup-status").text("Successfully Created Account")
-            window.location.href = "../index.html";
         })
         .catch((error) => {
             $("#signup-status").removeClass("text-success")
