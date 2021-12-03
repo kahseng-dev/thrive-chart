@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 let isDown = false, startX, scrollLeft;
 
@@ -50,13 +51,14 @@ $(document).ready(() => {
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
+    const database = getDatabase(app);
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             $("#nav-account").html(`
                 <li class="nav-item">
                     <a class="nav-link" href="#">
-                        Hi <span id="nav-account-user"></span>
+                        Hi <span id="nav-account-username"></span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -70,7 +72,12 @@ $(document).ready(() => {
             `)
             
             const uid = user.uid;
-            
+            let usernameRef = ref(database, 'users/' + uid + '/username')
+            onValue(usernameRef, (snapshot) => {
+                const data = snapshot.val()
+                $("#nav-account-username").text(data)
+            })
+
             $("#sign-out").on("click", () => {
                 auth.signOut();
             })

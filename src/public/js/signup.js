@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 $(document).ready(() => {
     const firebaseConfig = {
@@ -35,13 +35,14 @@ $(document).ready(() => {
                 username: username,
                 email: email
             })
-        })
-        .then(() => {
-            window.location.href = "./index.html";
+            .then(() => {
+                window.location.href = "./index.html";
+            })
         })
         .catch((error) => {
             $("#signup-status").removeClass("text-success")
             $("#signup-status").addClass("text-danger")
+            
             const errorCode = error.code;
             const errorMessage = error.message;
 

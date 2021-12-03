@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
 
 $(document).ready(() => {
     const firebaseConfig = {
@@ -24,13 +24,39 @@ $(document).ready(() => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-            })
-            .then(() => {
-                window.location.href = "./index.html";
+                $("#login-status").removeClass("text-danger")
+                $("#login-status").addClass("text-success")
+                $("#login-status").text("Successfully Logged In")
             })
             .catch((error) => {
+                $("#login-status").removeClass("text-success")
+                $("#login-status").addClass("text-danger")
+
                 const errorCode = error.code;
                 const errorMessage = error.message;
+
+                switch (errorMessage) {
+                    case "Firebase: Error (auth/invalid-email).":
+                        $("#login-status").text("Invalid email")
+                        break
+
+                    case "Firebase: Error (auth/internal-error).":
+                        $("#login-status").text("Invalid password or email")
+                        break
+
+                    case "Firebase: Error (auth/user-not-found).":
+                        $("#login-status").text("Account does not exist")
+                        break
+                        
+                    default:
+                        $("#login-status").text(errorMessage)
+                }
             })
+            
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "./index.html";
+            }
+        })
     })
 })
