@@ -1,3 +1,6 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+
 let isDown = false, startX, scrollLeft;
 
 function handleDown(e) {
@@ -33,4 +36,30 @@ $(document).ready(() => {
         "mouseup": handleUp,
         "mousemove": handleMove
     })
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyCeWQCzSS4ZkNO6sjhkxhe1jSMfpzdf_lE",
+        authDomain: "thrive-chart.firebaseapp.com",
+        databaseURL: "https://thrive-chart-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "thrive-chart",
+        storageBucket: "thrive-chart.appspot.com",
+        messagingSenderId: "667460322691",
+        appId: "1:667460322691:web:866629265a85e6ed6b22b6",
+        measurementId: "G-BPWB4MX81R"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+        console.log(user)
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        // ...
+    } 
+    
+    else {
+        // No user is signed in.
+    }
 })
