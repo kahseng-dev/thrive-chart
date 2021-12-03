@@ -50,16 +50,20 @@ $(document).ready(() => {
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (user) {
-        console.log(user)
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        // ...
-    } 
     
-    else {
-        // No user is signed in.
-    }
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const uid = user.uid;
+            console.log(uid)
+        } 
+        
+        else {
+            $("#login-form").on("submit", (e) => {
+                e.preventDefault()
+                let email = $("#login-email").val()
+                let password = $("#login-password").val()
+                login(email, password)
+            })
+        }
+    })
 })

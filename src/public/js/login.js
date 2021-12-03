@@ -21,19 +21,10 @@ $(document).ready(() => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const uid = user.uid;
-            console.log(uid)
-        } 
-        
-        else {
-            $("#login-form").on("submit", (e) => {
-                e.preventDefault()
-                let email = $("#login-email").val()
-                let password = $("#login-password").val()
-                login(email, password)
-            })
-        }
+    $("#login-form").on("submit", (e) => {
+        e.preventDefault()
+        let email = $("#login-email").val()
+        let password = $("#login-password").val()
+        login(email, password)
     })
 })
