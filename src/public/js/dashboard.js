@@ -200,7 +200,7 @@ function removeFromSavedTracklist(event) {
     event.currentTarget.parentElement.parentElement.remove()
 }
 
-$(document).ready(function() {
+$(document).ready(() => {
     $("#upload-button").on("click", () => {
         $("#real-upload-button").click()
     })

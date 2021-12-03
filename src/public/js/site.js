@@ -25,7 +25,7 @@ function handleMove(e) {
     $(this).scrollLeft(scrollLeft - walk);
 }
 
-$(document).ready(function() {
+$(document).ready(() => {
     // if section has slide class, the user can drag to scroll in the section
     $(".slide").on({
         "mousedown": handleDown,
