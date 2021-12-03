@@ -1,10 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-
-function login(email, password) {
-    console.log(email)
-    console.log(password)
-}
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
 
 $(document).ready(() => {
     const firebaseConfig = {
@@ -25,6 +20,17 @@ $(document).ready(() => {
         e.preventDefault()
         let email = $("#login-email").val()
         let password = $("#login-password").val()
-        login(email, password)
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+            })
+            .then(() => {
+                window.location.href = "./index.html";
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            })
     })
 })

@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 $(document).ready(() => {
     const firebaseConfig = {
@@ -15,9 +16,11 @@ $(document).ready(() => {
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
+    const database = getDatabase(app);
 
     $("#signup-form").on("submit", (e) => {
         e.preventDefault()
+        let username = $("#signup-username").val()
         let email = $("#signup-email").val()
         let password = $("#signup-password").val()
         
@@ -27,6 +30,14 @@ $(document).ready(() => {
             $("#signup-status").removeClass("text-danger")
             $("#signup-status").addClass("text-success")
             $("#signup-status").text("Successfully Created Account")
+
+            set(ref(database, 'users/' + user.uid), {
+                username: username,
+                email: email
+            })
+        })
+        .then(() => {
+            window.location.href = "./index.html";
         })
         .catch((error) => {
             $("#signup-status").removeClass("text-success")
