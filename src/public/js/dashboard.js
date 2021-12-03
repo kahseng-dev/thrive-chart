@@ -1,4 +1,5 @@
 function loadOverview(data) {
+    $("#overview-graph-container").html("<canvas id='overview-graph' style='max-height: 25rem'></canvas>")
     if (data) {
         $("#data-title").text("Overview")
         var totalAssets = 0, totalLiabilities = 0, totalExpenses = 0
@@ -229,6 +230,7 @@ $(document).ready(function() {
                     if (type == "Overview") {
                         $("#line-graph-container").hide()
                         $("#overview-graph").show()
+                        loadOverview(data)
                     }
 
                     else {
