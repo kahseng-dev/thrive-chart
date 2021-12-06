@@ -71,7 +71,7 @@ function loadViewDataOptions(data) {
 
 function loadLineGraph(data, type) {
     $("#data-title").text(type)
-    $("#line-graph-container").html("<canvas id='line-graph' class='w-100' style='height: 26rem;'></canvas>")
+    $("#line-graph-container").html("<canvas id='line-graph' class='w-100' style='height: 25rem;'></canvas>")
     var dateArray = [], dataArray = []
 
     data.map((row) => {
