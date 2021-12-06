@@ -32,7 +32,7 @@
             </div>
         </nav>
         
-        <nav class="col-lg-2 d-lg-flex bg-light flex-column collapse position-fixed" style="top: 3.5rem; bottom: 0px">
+        <nav class="col-lg-2 d-lg-flex flex-column collapse position-fixed" style="top: 3.5rem; bottom: 0px">
             <h6 class="m-3 text-muted">View Data Options</h6>
             <ul class="nav nav-pills nav-fill d-flex flex-column view-data-list mx-3"></ul>
         </nav>
@@ -40,7 +40,7 @@
         <div class="row" style="padding-top: 3.5rem;">
             <div class="col-lg-2 p-0"></div>
             <div class="col p-0">
-                <div class="m-3">
+                <div class="p-3 bg-light">
                     <div class="d-flex justify-content-between">
                         <h2 class="m-0">Dashboard</h2>
                         <div class="btn-toolbar">
@@ -52,7 +52,7 @@
                     <div class="row gap-3 m-0">
                         <div class="col col-lg-8 p-0">
                             <h4 id="data-title"></h4>
-                            <div class="bg-light rounded border border-secondary p-3">
+                            <div class="bg-white rounded border border-secondary p-3">
                                 <div id="overview-graph-container"></div>
                                 <div id="line-graph-container"></div>
                             </div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="col p-0">
                             <h4>Track List</h4>
-                            <div class="bg-light rounded border border-secondary p-3">
+                            <div class="bg-white rounded border border-secondary p-3">
                                 <div class="d-flex">
                                     <select class="form-select" id="track-options" disabled></select>
                                     <button class="btn btn-primary ms-2" id="add-to-track-button" disabled>
@@ -76,6 +76,7 @@
                             </div>
                         </div>
                     </div>
+                    <h4 class="mt-4">Data Table</h4>
                     <div class="row mt-3 border rounded border border-secondary">
                         <table class="table table-striped">
                             <thead>

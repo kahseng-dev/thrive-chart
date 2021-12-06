@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 function loadOverview(data) {
     $("#overview-graph-container").html("<canvas id='overview-graph' style='max-height: 25rem'></canvas>")
@@ -211,18 +211,36 @@ function loadDataTable(data) {
     headers.map((header) => {
         headerHTML += `<th scope="col">${header}</th>`
     })
-    $("#table-headers").html(headerHTML)
+    $("#table-headers").html(headerHTML + `<th scope="col">Actions</th>`)
 
     // Retrieving row of data for data table
     $("#table-rows").html("")
-    data.map((row) => {
+
+    data.map((row, index) => {
         $("#table-rows").append(`
-        <tr>
-            <td>${row["Category"]}</td>
-            <td>${row["Date"]}</td>
-            <td>${row["Description"]}</td>
-            <td>${row["Price"]}</td>
-            <td>${row["Type"]}</td>
+        <tr value="${index}">
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${row["Description"]}" />
+            </td>
+            <td>
+                <input type="number" readonly class="form-control-plaintext" value="${row["Price"]}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
+            </td>
+            <td class="data-table-actions">
+                <button class="btn btn-primary edit-row">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                </button>
+            </td>
         </tr>
         `)
     })
@@ -248,7 +266,7 @@ $(document).ready(() => {
         if (user) {
             onValue(ref(database, 'users/' + user.uid + '/data'), (snapshot) => {
                 const data = snapshot.val();
-
+                
                 loadOverview(data)
                 loadViewDataOptions(data)
                 loadTrackOptions(data)
@@ -280,6 +298,35 @@ $(document).ready(() => {
                 $("#track-list").on("click", ".remove-track-button", (e) => {
                     removeFromSavedTracklist(e)
                 })
+
+                $("#table-rows").on("click", ".edit-row", (e) => {
+                    let tdArray = e.currentTarget.parentElement.parentElement.children
+                    tdArray[5].innerHTML = `
+                    <button class="btn btn-success save-row">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="height:1.5rem; width:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        </svg>
+                    </button>`
+                    for (let i = 0; i < tdArray.length - 1; i++) {
+                        tdArray[i].children[0].removeAttribute("readonly")
+                        tdArray[i].children[0].classList.remove("form-control-plaintext")
+                        tdArray[i].children[0].classList.add("form-control")
+                    }
+                })
+
+                
+                $("#table-rows").on("click", ".save-row", (e) => {
+                    let tdArray = e.currentTarget.parentElement.parentElement.children
+                    let index = e.currentTarget.parentElement.parentElement.attributes.value.value
+                    let newData = {
+                        Category: tdArray[0].children[0].value,
+                        Date: tdArray[1].children[0].value,
+                        Description: tdArray[2].children[0].value,
+                        Price: tdArray[3].children[0].value,
+                        Type: tdArray[4].children[0].value,
+                    }
+                    update(ref(database, 'users/' + user.uid + '/data/' + index), newData)
+                })
             })
 
             $("#upload-button").on("click", () => {
@@ -304,6 +351,7 @@ $(document).ready(() => {
                         loadViewDataOptions(data)
                         loadTrackOptions(data)
                         loadTracklist(data)
+                        loadDataTable(data)
         
                         $(".view-data-list").on("click", ".view-data-option", (e) => {
                             let type = e.currentTarget.attributes[1].value
@@ -356,7 +404,8 @@ $(document).ready(() => {
                         loadViewDataOptions(data)
                         loadTrackOptions(data)
                         loadTracklist(data)
-        
+                        loadDataTable(data)
+
                         $(".view-data-list").on("click", ".view-data-option", (e) => {
                             let type = e.currentTarget.attributes[1].value
                             $(".view-data-option").children().removeClass("active")
