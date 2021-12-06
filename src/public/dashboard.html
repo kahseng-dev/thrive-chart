@@ -12,37 +12,23 @@
     <main>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed w-100" style="z-index: 10;">
             <div class="container-fluid">
-              <a class="navbar-brand fw-bold" href="./index.html">ThriveChart</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./dashboard.html">Dashboard</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./signup.html">
-                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span>Sign Up</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.html">
-                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                            </svg>
-                            <span>Login</span>
-                        </a>
-                    </li>
-                </ul>
+                <a class="navbar-brand fw-bold" href="./index.html">ThriveChart</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="./index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="./dashboard.html">Dashboard</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <div id="nav-account" class="d-flex"></div>
+                    </ul>
+                </div>
             </div>
         </nav>
         
@@ -86,9 +72,17 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <div id="track-list"></div>
+                                <div id="track-list" class="overflow-scroll mt-3" style="max-height: 21.5rem;"></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row mt-3 border rounded border border-secondary">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr id="table-headers"></tr>
+                            </thead>
+                            <tbody id="table-rows"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -100,6 +94,6 @@
     <script type="module" src="./js/site.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.min.js"></script>
-    <script src="./js/dashboard.js"></script>
+    <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>

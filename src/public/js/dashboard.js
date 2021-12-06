@@ -1,3 +1,7 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+
 function loadOverview(data) {
     $("#overview-graph-container").html("<canvas id='overview-graph' style='max-height: 25rem'></canvas>")
     if (data) {
@@ -147,7 +151,7 @@ function addCardToTracklist(data, type) {
     })
 
     let total = todayTotal - yesterdayTotal
-    var cardHTML = `<div class="card mt-3 track-card" value="${type}">
+    var cardHTML = `<div class="card mb-3 track-card" value="${type}">
                         <div class="card-body d-flex align-items-center justify-content-between">
                             <div>
                                 <h6 class="m-0 card-title">${type}</h6>
@@ -200,27 +204,56 @@ function removeFromSavedTracklist(event) {
     event.currentTarget.parentElement.parentElement.remove()
 }
 
-$(document).ready(() => {
-    $("#upload-button").on("click", () => {
-        $("#real-upload-button").click()
+function loadDataTable(data) {
+    // Retrieving headers for data table
+    let headers = Object.keys(data[0])
+    var headerHTML = ""
+    headers.map((header) => {
+        headerHTML += `<th scope="col">${header}</th>`
     })
-    
-    $("#real-upload-button").on("change", (e) => {
-        let reader = new FileReader();
-        let selectedFile = e.target.files[0]
+    $("#table-headers").html(headerHTML)
 
-        if (selectedFile) {
-            reader.readAsBinaryString(selectedFile)
-            reader.onload = (e) => {
-                let workbook = XLSX.read(e.target.result, {type: "binary"})
-                let firstSheetName = workbook.SheetNames[0]
-                let worksheet = workbook.Sheets[firstSheetName]
-                let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
+    // Retrieving row of data for data table
+    $("#table-rows").html("")
+    data.map((row) => {
+        $("#table-rows").append(`
+        <tr>
+            <td>${row["Category"]}</td>
+            <td>${row["Date"]}</td>
+            <td>${row["Description"]}</td>
+            <td>${row["Price"]}</td>
+            <td>${row["Type"]}</td>
+        </tr>
+        `)
+    })
+}
+
+$(document).ready(() => {
+    const firebaseConfig = {
+        apiKey: "AIzaSyCeWQCzSS4ZkNO6sjhkxhe1jSMfpzdf_lE",
+        authDomain: "thrive-chart.firebaseapp.com",
+        databaseURL: "https://thrive-chart-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "thrive-chart",
+        storageBucket: "thrive-chart.appspot.com",
+        messagingSenderId: "667460322691",
+        appId: "1:667460322691:web:866629265a85e6ed6b22b6",
+        measurementId: "G-BPWB4MX81R"
+    }
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            onValue(ref(database, 'users/' + user.uid + '/data'), (snapshot) => {
+                const data = snapshot.val();
 
                 loadOverview(data)
                 loadViewDataOptions(data)
                 loadTrackOptions(data)
                 loadTracklist(data)
+                loadDataTable(data)
 
                 $(".view-data-list").on("click", ".view-data-option", (e) => {
                     let type = e.currentTarget.attributes[1].value
@@ -247,7 +280,111 @@ $(document).ready(() => {
                 $("#track-list").on("click", ".remove-track-button", (e) => {
                     removeFromSavedTracklist(e)
                 })
-            }
+            })
+
+            $("#upload-button").on("click", () => {
+                $("#real-upload-button").click()
+            })
+
+            $("#real-upload-button").on("change", (e) => {
+                let reader = new FileReader();
+                let selectedFile = e.target.files[0]
+        
+                if (selectedFile) {
+                    reader.readAsBinaryString(selectedFile)
+                    reader.onload = (e) => {
+                        let workbook = XLSX.read(e.target.result, {type: "binary"})
+                        let firstSheetName = workbook.SheetNames[0]
+                        let worksheet = workbook.Sheets[firstSheetName]
+                        let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
+
+                        set(ref(database, 'users/' + user.uid + '/data'), data)
+
+                        loadOverview(data)
+                        loadViewDataOptions(data)
+                        loadTrackOptions(data)
+                        loadTracklist(data)
+        
+                        $(".view-data-list").on("click", ".view-data-option", (e) => {
+                            let type = e.currentTarget.attributes[1].value
+                            $(".view-data-option").children().removeClass("active")
+                            $(e.currentTarget).children().addClass("active")
+        
+                            if (type == "Overview") {
+                                $("#line-graph-container").hide()
+                                $("#overview-graph").show()
+                                loadOverview(data)
+                            }
+        
+                            else {
+                                $("#overview-graph").hide()
+                                $("#line-graph-container").show()
+                                loadLineGraph(data, type)
+                            }
+                        })
+        
+                        $("#add-to-track-button").on("click", () => {
+                            addToSavedTracklist(data, $("#track-options").val())
+                        })
+        
+                        $("#track-list").on("click", ".remove-track-button", (e) => {
+                            removeFromSavedTracklist(e)
+                        })
+                    }
+                }
+            })
+        }
+
+        else {
+            $("#upload-button").on("click", () => {
+                $("#real-upload-button").click()
+            })
+
+            $("#real-upload-button").on("change", (e) => {
+                let reader = new FileReader();
+                let selectedFile = e.target.files[0]
+        
+                if (selectedFile) {
+                    reader.readAsBinaryString(selectedFile)
+                    reader.onload = (e) => {
+                        let workbook = XLSX.read(e.target.result, {type: "binary"})
+                        let firstSheetName = workbook.SheetNames[0]
+                        let worksheet = workbook.Sheets[firstSheetName]
+                        let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
+        
+                        loadOverview(data)
+                        loadViewDataOptions(data)
+                        loadTrackOptions(data)
+                        loadTracklist(data)
+        
+                        $(".view-data-list").on("click", ".view-data-option", (e) => {
+                            let type = e.currentTarget.attributes[1].value
+                            $(".view-data-option").children().removeClass("active")
+                            $(e.currentTarget).children().addClass("active")
+        
+                            if (type == "Overview") {
+                                $("#line-graph-container").hide()
+                                $("#overview-graph").show()
+                                loadOverview(data)
+                            }
+        
+                            else {
+                                $("#overview-graph").hide()
+                                $("#line-graph-container").show()
+                                loadLineGraph(data, type)
+                            }
+                        })
+        
+                        $("#add-to-track-button").on("click", () => {
+                            addToSavedTracklist(data, $("#track-options").val())
+                        })
+        
+                        $("#track-list").on("click", ".remove-track-button", (e) => {
+                            removeFromSavedTracklist(e)
+                        })
+                    }
+                }
+            })
         }
     })
 })
