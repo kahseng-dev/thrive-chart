@@ -80,6 +80,7 @@ $(document).ready(() => {
 
             $("#sign-out").on("click", () => {
                 auth.signOut();
+                window.location.href = "../../index.html"
             })
         } 
         
