@@ -80,7 +80,7 @@ $(document).ready(() => {
 
             $("#sign-out").on("click", () => {
                 auth.signOut();
-                window.location.href = "./thrive-chart/index.html"
+                window.location.href = "../../index.html"
             })
         } 
         

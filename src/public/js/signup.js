@@ -36,7 +36,7 @@ $(document).ready(() => {
                 email: email
             })
             .then(() => {
-                window.location.href = "./thrive-chart/index.html"
+                window.location.href = "../../index.html"
             })
         })
         .catch((error) => {
