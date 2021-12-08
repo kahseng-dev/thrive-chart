@@ -204,45 +204,51 @@ function removeFromSavedTracklist(event) {
     event.currentTarget.parentElement.parentElement.remove()
 }
 
-function loadDataTable(data) {
-    // Retrieving headers for data table
-    let headers = Object.keys(data[0])
-    var headerHTML = ""
-    headers.map((header) => {
-        headerHTML += `<th scope="col">${header}</th>`
-    })
-    $("#table-headers").html(headerHTML + `<th scope="col">Actions</th>`)
+function loadDataTable(data, loggedIn) {
+    if (loggedIn) {
+        $("#table-headers").html(`
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Price</th>
+            <th scope="col">Action</th>`
+        )
+    }
 
     // Retrieving row of data for data table
     $("#table-rows").html("")
-
     data.map((row, index) => {
-        $("#table-rows").append(`
+        var htmlString = `
         <tr value="${index}">
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
             </td>
             <td>
                 <input type="text" readonly class="form-control-plaintext" value="${row["Description"]}" />
             </td>
             <td>
-                <input type="number" readonly class="form-control-plaintext" value="${row["Price"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
-            </td>
+                <input type="number" readonly class="form-control-plaintext" value="${row["Price"]}" />
+            </td>`
+
+        if (loggedIn) {
+            htmlString += `
             <td class="data-table-actions">
                 <button class="btn btn-primary edit-row">
                     <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
                 </button>
-            </td>
-        </tr>
-        `)
+            </td>`
+        }
+
+        $("#table-rows").append(htmlString + `</tr>`)
     })
 }
 
@@ -271,7 +277,7 @@ $(document).ready(() => {
                 loadViewDataOptions(data)
                 loadTrackOptions(data)
                 loadTracklist(data)
-                loadDataTable(data)
+                loadDataTable(data, true)
 
                 $(".view-data-list").on("click", ".view-data-option", (e) => {
                     let type = e.currentTarget.attributes[1].value
@@ -313,17 +319,16 @@ $(document).ready(() => {
                         tdArray[i].children[0].classList.add("form-control")
                     }
                 })
-
                 
                 $("#table-rows").on("click", ".save-row", (e) => {
                     let tdArray = e.currentTarget.parentElement.parentElement.children
                     let index = e.currentTarget.parentElement.parentElement.attributes.value.value
                     let newData = {
-                        Category: tdArray[0].children[0].value,
-                        Date: tdArray[1].children[0].value,
+                        Date: tdArray[0].children[0].value,
+                        Type: tdArray[1].children[0].value,
                         Description: tdArray[2].children[0].value,
-                        Price: tdArray[3].children[0].value,
-                        Type: tdArray[4].children[0].value,
+                        Category: tdArray[3].children[0].value,
+                        Price: (tdArray[4].children[0].value).toString(),
                     }
                     update(ref(database, 'users/' + user.uid + '/data/' + index), newData)
                 })
@@ -346,38 +351,6 @@ $(document).ready(() => {
                         let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
 
                         set(ref(database, 'users/' + user.uid + '/data'), data)
-
-                        loadOverview(data)
-                        loadViewDataOptions(data)
-                        loadTrackOptions(data)
-                        loadTracklist(data)
-                        loadDataTable(data)
-        
-                        $(".view-data-list").on("click", ".view-data-option", (e) => {
-                            let type = e.currentTarget.attributes[1].value
-                            $(".view-data-option").children().removeClass("active")
-                            $(e.currentTarget).children().addClass("active")
-        
-                            if (type == "Overview") {
-                                $("#line-graph-container").hide()
-                                $("#overview-graph").show()
-                                loadOverview(data)
-                            }
-        
-                            else {
-                                $("#overview-graph").hide()
-                                $("#line-graph-container").show()
-                                loadLineGraph(data, type)
-                            }
-                        })
-        
-                        $("#add-to-track-button").on("click", () => {
-                            addToSavedTracklist(data, $("#track-options").val())
-                        })
-        
-                        $("#track-list").on("click", ".remove-track-button", (e) => {
-                            removeFromSavedTracklist(e)
-                        })
                     }
                 }
             })
@@ -404,7 +377,7 @@ $(document).ready(() => {
                         loadViewDataOptions(data)
                         loadTrackOptions(data)
                         loadTracklist(data)
-                        loadDataTable(data)
+                        loadDataTable(data, false)
 
                         $(".view-data-list").on("click", ".view-data-option", (e) => {
                             let type = e.currentTarget.attributes[1].value

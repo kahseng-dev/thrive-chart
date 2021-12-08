@@ -18,7 +18,7 @@ $(document).ready(() => {
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            window.location.href = "./index.html";
+            window.location.href = "../../../index.html"
         }
 
         else {
@@ -52,6 +52,10 @@ $(document).ready(() => {
     
                         case "Firebase: Error (auth/user-not-found).":
                             $("#login-status").text("Account does not exist")
+                            break
+
+                        case "Firebase: Error (auth/wrong-password).":
+                            $("#login-status").text("Invalid password")
                             break
                             
                         default:
