@@ -18,7 +18,7 @@ $(document).ready(() => {
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            window.location.href = "./index.html"
+            window.location.href = "./thrive-chart/index.html"
         }
 
         else {
