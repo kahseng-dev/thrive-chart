@@ -81,20 +81,57 @@ function loadLineGraph(data, type) {
         }
     })
 
+    // Prediction Array
+    var dailyGrowthPercentages = []
+    for (let i = 0; i < dataArray.length; i++) {
+        if (dataArray[i + 1] == null) break
+        dailyGrowthPercentages.push((dataArray[i + 1] / dataArray[i]) - 1)
+    }
+
+    let sumGrowth = 0;
+    dailyGrowthPercentages.map((e) => {
+        sumGrowth += e
+    })
+
+    let averageGrowthPercent = sumGrowth / dailyGrowthPercentages.length
+    var data = parseInt(dataArray.slice(-1))
+    var predictDateArray = [], predictDataArray = []
+
+    for (let i = 1; i <= dataArray.length - 1; i++) {
+        predictDataArray.push(null)
+    }
+
+    predictDataArray.push(...dataArray.slice(-1))
+
+    for (let i = 1; i <= 5; i++) {
+        var date = new Date(dateArray.slice(-1))
+        date.setDate(date.getDate() + i);
+        predictDateArray.push(`${date.getMonth() + 1}/${date.getDate()}/${date.getUTCFullYear() % 100}`)
+
+        data += data * averageGrowthPercent/100
+        predictDataArray.push(data.toFixed(2))
+    }
+
+    // Plotting
     new Chart(document.getElementById('line-graph').getContext('2d'), {
         type: 'line',
         data: {
-            labels: dateArray,
+            labels: [...dateArray, ...predictDateArray],
             datasets: [{
                 label: type,
                 data: dataArray,
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
+            }, {
+                label: `Prediction (Average Growth = ${averageGrowthPercent.toFixed(2)}%)`,
+                data: predictDataArray,
+                borderDash: [5, 5],
+                tension: 0.1
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
         }
     })
 }
