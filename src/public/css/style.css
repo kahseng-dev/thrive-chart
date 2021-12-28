@@ -36,3 +36,7 @@ body {
     cursor: grabbing;
     cursor: -webkit-grabbing;
 }
+
+.form-control-plaintext {
+    width: min-content;
+}

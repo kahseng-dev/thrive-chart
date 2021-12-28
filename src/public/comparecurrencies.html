@@ -44,16 +44,16 @@
                     <h1 class="pb-4">Compare Currencies</h1>
                     <div class="d-flex justify-content-center align-items-center">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" style="width: 10rem;" id="select-base-currency" data-bs-toggle="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" id="select-base-currency" data-bs-toggle="dropdown">
                                 Base Currency
                             </button>
                             <ul class="dropdown-menu overflow-auto" style="max-height: 10rem;" id="convert-base-dropdown"></ul>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="m-3" style="width: 1.5rem; height: 1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="m-1" style="width: 1.5rem; height: 1.5rem" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" style="width: 10rem;" id="select-convert-currency" data-bs-toggle="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" id="select-convert-currency" data-bs-toggle="dropdown">
                                 Convert Currency
                             </button>
                             <ul class="dropdown-menu overflow-auto" style="max-height: 10rem;" id="convert-convert-dropdown"></ul>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
 
-                <div class="row mt-3 border rounded border border-secondary">
+                <div class="row mt-3 border rounded border border-secondary overflow-auto">
                     <table class="table table-striped">
                         <thead>
                             <tr id="table-headers">
