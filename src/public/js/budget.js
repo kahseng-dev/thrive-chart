@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 function displayMonthRetrieved() {
     let today = new Date()
@@ -19,14 +19,14 @@ function displayBudget() {
         let key = Object.keys(budget).pop()
         let spent = 0
 
-        if (thisMonthSpent[index]) {
+        if (thisMonthSpent[index] != undefined) {
             spent = thisMonthSpent[index][key]
         }
 
         else {
             thisMonthSpent.push({[key] : spent})
         }
-        
+
         let progressPercent = spent / budget[key] * 100
 
         if (isNaN(progressPercent)) {
@@ -128,8 +128,6 @@ function retrieveBudgetData() {
         thisMonthSpent.push({[key]: 0})
         totalBudget += data[key]
     })
-    
-    displayBudget()
 
     $("#total-budget").text(totalBudget)
 
@@ -164,23 +162,6 @@ function retrieveBudgetData() {
             }
         }
     })
-    
-    $("#remaining-budget").text(totalBudget - totalSpent)
-    let progressPercent = totalSpent / totalBudget * 100
-
-    if (isNaN(progressPercent)) { 
-        progressPercent = 0 
-    }
-    
-    $("#total-budget-bar").html(`
-        <div class="progress" style="height: 20px;">
-            <div class="progress-bar" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow=" ${progressPercent}" aria-valuemin="0" aria-valuemax="100"> ${progressPercent.toFixed(1)}%</div>
-        </div>
-        <div class="d-flex justify-content-between">
-            <p class="fw-bold text-primary m-0">$<span class="ps-1">${totalSpent}</span></p>
-            <p class="fw-bold m-0">$<span class="ps-1">${totalBudget - totalSpent}</span></p>
-        </div>
-    `)
 
     $("#new-budget-expense-activities").html("")
     if (foundExpenses.length != 0) {
@@ -200,6 +181,8 @@ function retrieveBudgetData() {
 
     foundExpenses.map((expense) => {
         let key = Object.keys(expense).pop()
+        totalSpent += parseFloat(expense[key])
+
         $("#new-budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
                 <div class="col-8 found-expense">
@@ -216,6 +199,39 @@ function retrieveBudgetData() {
             </div>
         `)
     })
+
+    $("#remaining-budget").text(totalBudget - totalSpent)
+    let progressPercent = totalSpent / totalBudget * 100
+
+    if (isNaN(progressPercent) || progressPercent == "Infinity") { 
+        progressPercent = 0 
+    }
+
+    if (totalBudget - totalSpent < 0) {
+        $("#total-budget-bar").html(`
+            <div class="progress" style="height: 20px;">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow=" ${progressPercent}" aria-valuemin="0" aria-valuemax="100"> ${progressPercent.toFixed(1)}%</div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fw-bold text-primary m-0">$<span class="ps-1">${totalSpent}</span></p>
+                <p class="fw-bold m-0 text-danger">$<span class="ps-1">${totalBudget - totalSpent}</span></p>
+            </div>
+        `)
+    } 
+
+    else {
+        $("#total-budget-bar").html(`
+            <div class="progress" style="height: 20px;">
+                <div class="progress-bar" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow=" ${progressPercent}" aria-valuemin="0" aria-valuemax="100"> ${progressPercent.toFixed(1)}%</div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="fw-bold text-primary m-0">$<span class="ps-1">${totalSpent}</span></p>
+                <p class="fw-bold m-0">$<span class="ps-1">${totalBudget - totalSpent}</span></p>
+            </div>
+        `)
+    }
+    
+    displayBudget()
 }
 
 var thisMonthSpent = [], userData = [], userBudget = [], foundExpenses = [], budgetKeys = [] 
@@ -240,8 +256,8 @@ $(document).ready(() => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             onValue(ref(database, 'users/' + user.uid + '/budget'), (snapshot) => {
-                displayMonthRetrieved()
                 userBudget = snapshot.val()
+                displayMonthRetrieved()
 
                 if (userBudget == null) {
                     userBudget = []
