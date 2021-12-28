@@ -309,7 +309,7 @@ $(document).ready(() => {
         if (user) {
             onValue(ref(database, 'users/' + user.uid + '/data'), (snapshot) => {
                 const data = snapshot.val();
-                
+
                 loadOverview(data)
                 loadViewDataOptions(data)
                 loadTrackOptions(data)
@@ -368,6 +368,29 @@ $(document).ready(() => {
                         Price: (tdArray[4].children[0].value).toString(),
                     }
                     update(ref(database, 'users/' + user.uid + '/data/' + index), newData)
+                })
+
+                $("#add-transaction-button").removeClass("d-none")
+                $("#add-transaction-form").on("submit", function(e) {
+                    e.preventDefault()
+                    let category = $("#add-transaction-category").val()
+                    let description = $("#add-transaction-description").val()
+                    let date = $("#add-transaction-date").val()
+                    let price = $("#add-transaction-price").val()
+                    let type = $("#add-transaction-type").val()
+                    
+                    let row = {
+                        "Category": category,
+                        "Date": date,
+                        "Description": description,
+                        "Price": price,
+                        "Type": type
+                    }
+
+                    $("#add-transaction-modal").modal("hide")
+                    data.push(row)
+                    set(ref(database, 'users/' + user.uid + '/data/' + (data.length - 1)), row)
+                    loadDataTable(data, true)
                 })
             })
 

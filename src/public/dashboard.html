@@ -50,8 +50,46 @@
                     <div class="d-flex justify-content-between">
                         <h2 class="m-0">Dashboard</h2>
                         <div class="btn-toolbar">
+                            <button type="button" id="add-transaction-button" class="btn btn-primary me-3 d-none" data-bs-toggle="modal" data-bs-target="#add-transaction-modal">Add Transaction</button>
                             <input type="file" id="real-upload-button" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden="hidden" />
                             <button type="button" id="upload-button" class="btn btn-success me-2">Upload Excel</button>
+                        </div>
+
+                        <div class="modal fade" id="add-transaction-modal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Transaction</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form class="modal-body" id="add-transaction-form">
+                                        <div class="mb-3">
+                                            <label for="add-transaction-date" class="form-label">Date</label>
+                                            <input type="date" class="form-control" id="add-transaction-date" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-type" class="form-label">Type</label>
+                                            <input type="text" class="form-control" id="add-transaction-type" placeholder="Income" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-description" class="form-label">Description</label>
+                                            <input type="text" class="form-control" id="add-transaction-description" placeholder="Hey! Today I made $50" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-category" class="form-label">Category</label>
+                                            <input type="text" class="form-control" id="add-transaction-category" placeholder="Asset" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-price" class="form-label">Price</label>
+                                            <input type="number" class="form-control" id="add-transaction-price" placeholder="50" required />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" for="add-transaction-form" class="btn btn-primary" id="add-transaction">Add Transaction</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr/>
@@ -83,7 +121,7 @@
                         </div>
                     </div>
                     <h4 class="mt-4">Data Table</h4>
-                    <div class="row mt-3 border rounded border border-secondary">
+                    <div class="row mt-3 border rounded border border-secondary overflow-auto">
                         <table class="table table-striped">
                             <thead>
                                 <tr id="table-headers">
