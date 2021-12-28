@@ -57,7 +57,7 @@ $(document).ready(() => {
         if (user) {
             $("#nav-account").html(`
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="./profile.html">
                         Hi <span id="nav-account-username"></span>
                     </a>
                 </li>
