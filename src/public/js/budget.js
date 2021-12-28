@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
 
 function displayMonthRetrieved() {
     let today = new Date()
@@ -126,7 +126,6 @@ function retrieveBudgetData() {
     })
 
     $("#total-budget").text(totalBudget)
-    $("#remaining-budget").text(totalBudget - totalSpent)
 
     userData.map((data) => {
         if (data.Category == "Expense") {
@@ -159,8 +158,14 @@ function retrieveBudgetData() {
             }
         }
     })
-
+    
+    $("#remaining-budget").text(totalBudget - totalSpent)
     let progressPercent = totalSpent / totalBudget * 100
+
+    if (isNaN(progressPercent)) { 
+        progressPercent = 0 
+    }
+    
     $("#total-budget-bar").html(`
         <div class="progress" style="height: 20px;">
             <div class="progress-bar" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow=" ${progressPercent}" aria-valuemin="0" aria-valuemax="100"> ${progressPercent.toFixed(1)}%</div>
@@ -231,150 +236,156 @@ $(document).ready(() => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             onValue(ref(database, 'users/' + user.uid + '/budget'), (snapshot) => {
-                // const userBudget = snapshot.val()
-                userBudget = [{Food: 2000}, {Fuel: 300}, {Household: 3500}]
                 displayMonthRetrieved()
-                
-                $("#edit-budget-button").on("click", () => {
-                    $("#edit-budget-button").addClass("d-none")
-                    $("#save-budget-button").removeClass("d-none")
+                userBudget = snapshot.val()
+                console.log(userBudget)
 
-                    $(".budget-field").removeClass("form-control-plaintext")
-                    $(".budget-field").addClass("form-control")
-                    $(".budget-field").removeAttr("readonly")
-                    
-                    $("#add-budget-button-container").removeClass("d-none")
-                    $("#activities-title").removeClass("col-8")
-                    $("#activities-title").addClass("col-4")
-
-                    $(".expense-delete").removeClass("d-none")
-                    $(".expense-add").removeClass("d-none")
-
-                    $(".found-expense").removeClass("col-8")
-                    $(".found-expense").addClass("col-4")
-                })
-
-                $("#save-budget-button").on("click", () => {
+                if (userBudget == null) {
                     userBudget = []
-
-                    $("#budget-expense-activities > .row").each((i) => {
-                        let budget = $("#budget-expense-activities")[0].children[i]
-                        let budgetName = budget.children[0].children[0].value
-                        let budgetValue = budget.children[0].children[1].children[0].value
-                        
-                        if (budgetName != "") {
-                            userBudget.push({[budgetName] : parseFloat(budgetValue)})
-                        }
-                    })
-
-                    retrieveBudgetData()
-
-                    $("#save-budget-button").addClass("d-none")
-                    $("#edit-budget-button").removeClass("d-none")
-
-                    $(".budget-field").removeClass("form-control")
-                    $(".budget-field").addClass("form-control-plaintext")
-                    $(".budget-field").prop("readonly", true)
-
-                    $("#add-budget-button-container").addClass("d-none")
-                    $("#activities-title").addClass("col-8")
-                    $("#activities-title").removeClass("col-4")
-                    
-                    $(".expense-delete").addClass("d-none")
-                    $(".expense-add").addClass("d-none")
-                    
-                    $(".found-expense").addClass("col-8")
-                    $(".found-expense").removeClass("col-4")
-                })
-
-                $("#add-budget-button").on("click", () => {
-                    $("#budget-expense-activities").append(`
-                    <div class="row pt-2 pb-2 justify-content-center align-items-center">
-                        <div class="col-3">
-                            <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="" />
-                            <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="0" /></p>
-                        </div>
-                        <div class="col-4 offset-1">
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="fw-bold text-primary m-0">$<span class="ps-1">0</span></p>
-                                <p class="fw-bold m-0">$<span class="ps-1">0</span></p>
-                            </div>
-                        </div>
-                        <div class="col-1 ms-2 expense-delete">
-                            <button class="btn btn-danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    `)
-                })
-
-                $("#prev-month-button").on("click", () => {
-                    dateRetrieved.setMonth(dateRetrieved.getMonth() - 1);
-                    retrieveBudgetData()
-                })
-
-                $("#next-month-button").on("click", () => {
-                    dateRetrieved.setMonth(dateRetrieved.getMonth() + 1);
-                    retrieveBudgetData()
-                })
-
-                $("#budget-expense-activities").on("click", ".expense-delete", (e) => {
-                    let value = e.currentTarget.parentElement.attributes.value.value
-
-                    userBudget.map((b, index) => {
-                        if (Object.keys(b).pop() == value) {
-                            userBudget.splice(index, 1)
-                            e.currentTarget.parentElement.remove()
-                        }
-                    })
-                })
-
-                $("#new-budget-expense-activities").on("click", ".expense-add", (e) => {
-                    let key = e.currentTarget.parentElement.children[0].children[0].innerHTML
-                    let value = e.currentTarget.parentElement.children[0].children[1].children[0].innerHTML
-                    userBudget.push({[key]: 0})
-
-                    if (value != 0) {
-                        thisMonthSpent.push({[key] : value})
-                    }
-
-                    e.currentTarget.parentElement.remove()
-
-                    $("#budget-expense-activities").append(`
-                    <div class="row pt-2 pb-2 justify-content-center align-items-center">
-                        <div class="col-3">
-                            <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="${key}" />
-                            <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="${0}" /></p>
-                        </div>
-                        <div class="col-4 offset-1">
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="fw-bold text-primary m-0">$<span class="ps-1">${value}</span></p>
-                                <p class="fw-bold m-0">$<span class="ps-1">0</span></p>
-                            </div>
-                        </div>
-                        <div class="col-1 ms-2 expense-delete">
-                            <button class="btn btn-danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    `)
-                })
+                    set(ref(database, 'users/' + user.uid + '/budget'), userBudget)
+                }
 
                 onValue(ref(database, 'users/' + user.uid + '/data'), (snapshot) => {
                     userData = snapshot.val()
                     retrieveBudgetData()
+                    
+                    $("#edit-budget-button").on("click", () => {
+                        $("#edit-budget-button").addClass("d-none")
+                        $("#save-budget-button").removeClass("d-none")
+
+                        $(".budget-field").removeClass("form-control-plaintext")
+                        $(".budget-field").addClass("form-control")
+                        $(".budget-field").removeAttr("readonly")
+                        
+                        $("#add-budget-button-container").removeClass("d-none")
+                        $("#activities-title").removeClass("col-8")
+                        $("#activities-title").addClass("col-4")
+
+                        $(".expense-delete").removeClass("d-none")
+                        $(".expense-add").removeClass("d-none")
+
+                        $(".found-expense").removeClass("col-8")
+                        $(".found-expense").addClass("col-4")
+                    })
+
+                    $("#save-budget-button").on("click", () => {
+                        userBudget = []
+
+                        $("#budget-expense-activities > .row").each((i) => {
+                            let budget = $("#budget-expense-activities")[0].children[i]
+                            let budgetName = budget.children[0].children[0].value
+                            let budgetValue = budget.children[0].children[1].children[0].value
+                            
+                            if (budgetName != "") {
+                                userBudget.push({[budgetName] : parseFloat(budgetValue)})
+                            }
+                        })
+
+                        retrieveBudgetData()
+                        set(ref(database, 'users/' + user.uid + '/budget'), userBudget)
+
+                        $("#save-budget-button").addClass("d-none")
+                        $("#edit-budget-button").removeClass("d-none")
+
+                        $(".budget-field").removeClass("form-control")
+                        $(".budget-field").addClass("form-control-plaintext")
+                        $(".budget-field").prop("readonly", true)
+
+                        $("#add-budget-button-container").addClass("d-none")
+                        $("#activities-title").addClass("col-8")
+                        $("#activities-title").removeClass("col-4")
+                        
+                        $(".expense-delete").addClass("d-none")
+                        $(".expense-add").addClass("d-none")
+                        
+                        $(".found-expense").addClass("col-8")
+                        $(".found-expense").removeClass("col-4")
+                    })
+
+                    $("#add-budget-button").on("click", () => {
+                        $("#budget-expense-activities").append(`
+                        <div class="row pt-2 pb-2 justify-content-center align-items-center">
+                            <div class="col-3">
+                                <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="" />
+                                <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="0" /></p>
+                            </div>
+                            <div class="col-4 offset-1">
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="fw-bold text-primary m-0">$<span class="ps-1">0</span></p>
+                                    <p class="fw-bold m-0">$<span class="ps-1">0</span></p>
+                                </div>
+                            </div>
+                            <div class="col-1 ms-2 expense-delete">
+                                <button class="btn btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        `)
+                    })
+
+                    $("#prev-month-button").on("click", () => {
+                        dateRetrieved.setMonth(dateRetrieved.getMonth() - 1);
+                        retrieveBudgetData()
+                    })
+
+                    $("#next-month-button").on("click", () => {
+                        dateRetrieved.setMonth(dateRetrieved.getMonth() + 1);
+                        retrieveBudgetData()
+                    })
+
+                    $("#budget-expense-activities").on("click", ".expense-delete", (e) => {
+                        let value = e.currentTarget.parentElement.attributes.value.value
+
+                        userBudget.map((b, index) => {
+                            if (Object.keys(b).pop() == value) {
+                                userBudget.splice(index, 1)
+                                e.currentTarget.parentElement.remove()
+                            }
+                        })
+                    })
+
+                    $("#new-budget-expense-activities").on("click", ".expense-add", (e) => {
+                        let key = e.currentTarget.parentElement.children[0].children[0].innerHTML
+                        let value = e.currentTarget.parentElement.children[0].children[1].children[0].innerHTML
+                        userBudget.push({[key]: 0})
+
+                        if (value != 0) {
+                            thisMonthSpent.push({[key] : value})
+                        }
+
+                        e.currentTarget.parentElement.remove()
+
+                        $("#budget-expense-activities").append(`
+                        <div class="row pt-2 pb-2 justify-content-center align-items-center">
+                            <div class="col-3">
+                                <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="${key}" />
+                                <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="${0}" /></p>
+                            </div>
+                            <div class="col-4 offset-1">
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="fw-bold text-primary m-0">$<span class="ps-1">${value}</span></p>
+                                    <p class="fw-bold m-0">$<span class="ps-1">0</span></p>
+                                </div>
+                            </div>
+                            <div class="col-1 ms-2 expense-delete">
+                                <button class="btn btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        `)
+                    })
                 })
             })
         }
