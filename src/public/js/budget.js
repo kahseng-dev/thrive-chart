@@ -128,6 +128,8 @@ function retrieveBudgetData() {
         thisMonthSpent.push({[key]: 0})
         totalBudget += data[key]
     })
+    
+    displayBudget()
 
     $("#total-budget").text(totalBudget)
 
@@ -214,8 +216,6 @@ function retrieveBudgetData() {
             </div>
         `)
     })
-
-    displayBudget()
 }
 
 var thisMonthSpent = [], userData = [], userBudget = [], foundExpenses = [], budgetKeys = [] 
@@ -242,7 +242,6 @@ $(document).ready(() => {
             onValue(ref(database, 'users/' + user.uid + '/budget'), (snapshot) => {
                 displayMonthRetrieved()
                 userBudget = snapshot.val()
-                console.log(userBudget)
 
                 if (userBudget == null) {
                     userBudget = []
