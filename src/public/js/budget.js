@@ -36,11 +36,11 @@ function displayBudget() {
         if (progressPercent == "Infinity") {
             $("#budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
-                <div class="col-3">
+                <div class="col-3 budget-field-text">
                     <input type="text" class="form-control-plaintext fw-bold text-secondary m-0 p-0 budget-field" readonly value="${key}" />
                     <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control-plaintext fw-bold m-0 p-0 ms-1 budget-field" readonly value="${budget[key]}" /></p>
                 </div>
-                <div class="col-4 offset-1">
+                <div class="col-6 col-lg-4 offset-1">
                     <div class="progress" style="height: 20px;">
                         <div class="progress-bar bg-danger" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
                     </div>
@@ -63,11 +63,11 @@ function displayBudget() {
         else if (budget[key] - spent < 0) {
             $("#budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
-                <div class="col-3">
+                <div class="col-3 budget-field-text">
                     <input type="text" class="form-control-plaintext fw-bold text-secondary m-0 p-0 budget-field" readonly value="${key}" />
                     <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control-plaintext fw-bold m-0 p-0 ms-1 budget-field" readonly value="${budget[key]}" /></p>
                 </div>
-                <div class="col-4 offset-1">
+                <div class="col-6 col-lg-4 offset-1">
                     <div class="progress" style="height: 20px;">
                         <div class="progress-bar bg-danger" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow="${progressPercent}" aria-valuemin="0" aria-valuemax="100">${progressPercent.toFixed(1)}%</div>
                     </div>
@@ -90,11 +90,11 @@ function displayBudget() {
         else {
             $("#budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
-                <div class="col-3">
+                <div class="col-3 budget-field-text">
                     <input type="text" class="form-control-plaintext fw-bold text-secondary m-0 p-0 budget-field" readonly value="${key}" />
                     <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control-plaintext fw-bold m-0 p-0 ms-1 budget-field" readonly value="${budget[key]}" /></p>
                 </div>
-                <div class="col-4 offset-1">
+                <div class="col-6 col-lg-4 offset-1">
                     <div class="progress" style="height: 20px;">
                         <div class="progress-bar" role="progressbar" style="width: ${progressPercent}%;" aria-valuenow="${progressPercent}" aria-valuemin="0" aria-valuemax="100">${progressPercent.toFixed(1)}%</div>
                     </div>
@@ -168,12 +168,12 @@ function retrieveBudgetData() {
         $("#new-budget-expense-activities").html(`
             <div class="pt-3 container">
                 <div class="row justify-content-center mb-2">
-                    <div class="col-8">
+                    <div class="col-12 col-lg-8">
                         <h5 class="fw-bold text-secondary">Found Expenses</h5>
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <hr class="col-8"/>
+                    <hr class="col-12 col-lg-8"/>
                 </div>
             </div>
         `)
@@ -185,11 +185,11 @@ function retrieveBudgetData() {
 
         $("#new-budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
-                <div class="col-8 found-expense">
+                <div class="col-10 col-lg-8 found-expense">
                     <p class="m-0 fw-bold text-secondary">${key}</p>
                     <p class="fw-bold m-0 text-danger">-$<span class="ps-1">${expense[key]}</span></p>
                 </div>
-                <div class="col-4 text-end d-none expense-add">
+                <div class="col-2 col-lg-4 text-end d-none expense-add">
                     <button class="btn btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -277,14 +277,22 @@ $(document).ready(() => {
                         $(".budget-field").removeAttr("readonly")
                         
                         $("#add-budget-button-container").removeClass("d-none")
-                        $("#activities-title").removeClass("col-8")
-                        $("#activities-title").addClass("col-4")
+                        
+                        $("#activities-title").removeClass("col-12")
+                        $("#activities-title").removeClass("col-lg-8")
+                        $("#activities-title").addClass("col-10")
+                        $("#activities-title").addClass("col-lg-4")
 
                         $(".expense-delete").removeClass("d-none")
                         $(".expense-add").removeClass("d-none")
 
-                        $(".found-expense").removeClass("col-8")
+                        $(".found-expense").removeClass("col-12")
                         $(".found-expense").addClass("col-4")
+                        $(".found-expense").removeClass("col-lg-8")
+                        $(".found-expense").addClass("col-lg-4")
+
+                        $(".budget-field-text").removeClass("col-3")
+                        $(".budget-field-text").addClass("col-2")
                     })
 
                     $("#save-budget-button").on("click", () => {
@@ -311,24 +319,32 @@ $(document).ready(() => {
                         $(".budget-field").prop("readonly", true)
 
                         $("#add-budget-button-container").addClass("d-none")
-                        $("#activities-title").addClass("col-8")
-                        $("#activities-title").removeClass("col-4")
+                        
+                        $("#activities-title").removeClass("col-lg-4")
+                        $("#activities-title").addClass("col-lg-8")
+                        $("#activities-title").removeClass("col-10")
+                        $("#activities-title").addClass("col-12")
                         
                         $(".expense-delete").addClass("d-none")
                         $(".expense-add").addClass("d-none")
                         
+                        $(".found-expense").addClass("col-lg-8")
+                        $(".found-expense").removeClass("col-lg-4")
                         $(".found-expense").addClass("col-8")
                         $(".found-expense").removeClass("col-4")
+
+                        $(".budget-field-text").removeClass("col-2")
+                        $(".budget-field-text").addClass("col-3")
                     })
 
                     $("#add-budget-button").on("click", () => {
                         $("#budget-expense-activities").append(`
                         <div class="row pt-2 pb-2 justify-content-center align-items-center">
-                            <div class="col-3">
+                            <div class="col-2 budget-field-text">
                                 <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="" />
                                 <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="0" /></p>
                             </div>
-                            <div class="col-4 offset-1">
+                            <div class="col-6 col-lg-4 offset-1">
                                 <div class="progress" style="height: 20px;">
                                     <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                 </div>
@@ -382,7 +398,7 @@ $(document).ready(() => {
 
                         $("#budget-expense-activities").append(`
                         <div class="row pt-2 pb-2 justify-content-center align-items-center">
-                            <div class="col-3">
+                            <div class="col-4 budget-field-text">
                                 <input type="text" class="form-control fw-bold text-secondary m-0 p-0 budget-field" value="${key}" />
                                 <p class="d-flex align-items-center fw-bold m-0">$<input type="number" class="form-control fw-bold m-0 p-0 ms-1 budget-field" value="${0}" /></p>
                             </div>
