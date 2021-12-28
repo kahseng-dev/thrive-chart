@@ -29,6 +29,10 @@ function displayBudget() {
         
         let progressPercent = spent / budget[key] * 100
 
+        if (isNaN(progressPercent)) {
+            progressPercent = 0
+        }
+
         if (progressPercent == "Infinity") {
             $("#budget-expense-activities").append(`
             <div class="row pt-2 pb-2 justify-content-center align-items-center" value="${key}">
