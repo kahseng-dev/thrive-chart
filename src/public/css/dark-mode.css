@@ -1,0 +1,33 @@
+[data-theme="dark"] {
+  background-color: #171717 !important;
+  color: #eee;
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: #404040 !important;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: #262626 !important;
+}
+
+[data-theme="dark"] .bg-black {
+  background-color: #eee !important;
+}
+
+[data-theme="dark"] th {
+  color: #eee !important;
+}
+
+[data-theme="dark"] td {
+  color: #eee !important;
+}
+
+[data-theme="dark"] input {
+  color: #eee !important;
+}
+
+[data-theme="dark"] .card {
+  background-color: #404040 !important;
+  color: #eee !important;
+}

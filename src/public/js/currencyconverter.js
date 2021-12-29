@@ -4,7 +4,6 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.
 
 function loadDataTable(userData) {
     $("#table-rows").html("")
-    console.log(userData)
     userData.map((row, index) => {
         var htmlString = `
         <tr value="${index}">

@@ -57,6 +57,30 @@ $(document).ready(() => {
     const auth = getAuth();
     const database = getDatabase(app);
 
+    if (localStorage.getItem("website-theme") == "dark") {
+        $("#website-theme").attr('checked', true)
+    }
+
+    else {
+        $("#website-theme").attr('checked', false)
+    }
+
+    $("#website-theme").on("click", () => {
+        let checked = $("#website-theme").attr("checked")
+
+        if (checked) { 
+            $("#website-theme").attr('checked', false)
+            localStorage.setItem("website-theme", "light")
+            $("body").removeAttr("data-theme")
+        }
+
+        else {
+            $("#website-theme").attr('checked', true)
+            localStorage.setItem("website-theme", "dark")
+            $("body").attr("data-theme", "dark")
+        }
+    })
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             const uid = user.uid;

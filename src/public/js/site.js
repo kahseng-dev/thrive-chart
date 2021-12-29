@@ -30,6 +30,14 @@ function handleMove(e) {
 }
 
 $(document).ready(() => {
+    if (localStorage.getItem("website-theme") == "dark") {
+        $("body").attr("data-theme", "dark")
+    }
+
+    else {
+        $("body").removeAttr("data-theme")
+    }
+
     // if section has slide class, the user can drag to scroll in the section
     $(".slide").on({
         "mousedown": handleDown,
