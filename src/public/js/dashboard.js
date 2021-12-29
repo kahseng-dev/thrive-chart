@@ -10,12 +10,17 @@ function loadOverview(data) {
 
         data.map((row) => {
             switch (row["Category"]) {
-                case 'Asset':
-                    totalAssets += parseInt(row["Price"])
-                case 'Liability':
-                    totalLiabilities += parseInt(row["Price"])
-                case 'Expense':
-                    totalExpenses += parseInt(row["Price"])
+                case "Asset":
+                    totalAssets += (parseFloat(row["Price"]) * parseFloat(row["Quantity"]))
+                    break
+
+                case "Liability":
+                    totalLiabilities += (parseFloat(row["Price"]) * parseFloat(row["Quantity"]))
+                    break
+
+                case "Expense":
+                    totalExpenses += (parseFloat(row["Price"]) * parseFloat(row["Quantity"]))
+                    break
             }
         })
     
@@ -77,12 +82,13 @@ function loadLineGraph(data, type) {
     data.map((row) => {
         if (row["Type"] == type) { 
             dateArray.push(row["Date"])
-            dataArray.push(row["Price"])
+            dataArray.push((parseFloat(row["Price"]) * parseFloat(row["Quantity"])))
         }
     })
 
     // Prediction Array
     var dailyGrowthPercentages = []
+
     for (let i = 0; i < dataArray.length; i++) {
         if (dataArray[i + 1] == null) break
         dailyGrowthPercentages.push((dataArray[i + 1] / dataArray[i]) - 1)
@@ -94,7 +100,7 @@ function loadLineGraph(data, type) {
     })
 
     let averageGrowthPercent = sumGrowth / dailyGrowthPercentages.length
-    var data = parseInt(dataArray.slice(-1))
+    var data = parseFloat(dataArray.slice(-1))
     var predictDateArray = [], predictDataArray = []
 
     for (let i = 1; i <= dataArray.length - 1; i++) {
@@ -106,8 +112,7 @@ function loadLineGraph(data, type) {
     for (let i = 1; i <= 5; i++) {
         var date = new Date(dateArray.slice(-1))
         date.setDate(date.getDate() + i);
-        predictDateArray.push(`${date.getMonth() + 1}/${date.getDate()}/${date.getUTCFullYear() % 100}`)
-
+        predictDateArray.push(`${date.getUTCFullYear()}-${date.getMonth() + 1}-${date.getDate()}`)
         data += data * averageGrowthPercent/100
         predictDataArray.push(data.toFixed(2))
     }
@@ -120,7 +125,7 @@ function loadLineGraph(data, type) {
             datasets: [{
                 label: type,
                 data: dataArray,
-                borderColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(13, 110, 253)',
                 tension: 0.1
             }, {
                 label: `Prediction (Average Growth = ${averageGrowthPercent.toFixed(2)}%)`,
@@ -179,11 +184,11 @@ function addCardToTracklist(data, type) {
 
     data.map((data) => {
         if (data["Type"] == type && new Date(data["Date"]).toLocaleDateString('en-SG') == today) {
-            todayTotal += parseInt(data["Price"])
+            todayTotal += (parseFloat(data["Price"]) * parseFloat(data["Quantity"]))
         }
     
         else if (data["Type"] == type && new Date(data["Date"]).toLocaleDateString('en-SG') == yesterday) {
-            yesterdayTotal += parseInt(data["Price"])
+            yesterdayTotal += (parseFloat(data["Price"]) * parseFloat(data["Quantity"]))
         }
     })
 
@@ -244,12 +249,14 @@ function removeFromSavedTracklist(event) {
 function loadDataTable(data, loggedIn) {
     if (loggedIn) {
         $("#table-headers").html(`
-            <th scope="col">Date</th>
-            <th scope="col">Type</th>
-            <th scope="col">Description</th>
-            <th scope="col">Category</th>
-            <th scope="col">Price</th>
-            <th scope="col">Action</th>`
+            <th class="col-1">Category</th>
+            <th class="col-1">Date</th>
+            <th class="col-1">Description</th>
+            <th class="col-1">Price</th>
+            <th class="col-1">Quantity</th>
+            <th class="col-1">Type</th>
+            <th class="col-1">Total</th>
+            <th class="col-1">Action</th>`
         )
     }
 
@@ -259,20 +266,27 @@ function loadDataTable(data, loggedIn) {
         var htmlString = `
         <tr value="${index}">
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
             </td>
             <td>
                 <input type="text" readonly class="form-control-plaintext" value="${row["Description"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
+                <input type="number" readonly class="form-control-plaintext" value="${row["Price"]}" />
             </td>
             <td>
-                <input type="number" readonly class="form-control-plaintext" value="${row["Price"]}" />
-            </td>`
+                <input type="number" readonly class="form-control-plaintext" value="${row["Quantity"]}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
+            </td>
+            <td class="align-middle">
+                <p class="m-0">${parseFloat(row["Price"])*parseFloat(row["Quantity"])}</p>
+            </td>
+            `
 
         if (loggedIn) {
             htmlString += `
@@ -281,6 +295,11 @@ function loadDataTable(data, loggedIn) {
                     <svg xmlns="http://www.w3.org/2000/svg" style="width:1.5rem; height:1.5rem;" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
+                </button>
+                <button class="btn btn-success save-row d-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="height:1.5rem; width:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        </svg>
                 </button>
             </td>`
         }
@@ -344,13 +363,10 @@ $(document).ready(() => {
 
                 $("#table-rows").on("click", ".edit-row", (e) => {
                     let tdArray = e.currentTarget.parentElement.parentElement.children
-                    tdArray[5].innerHTML = `
-                    <button class="btn btn-success save-row">
-                        <svg xmlns="http://www.w3.org/2000/svg" style="height:1.5rem; width:1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                        </svg>
-                    </button>`
-                    for (let i = 0; i < tdArray.length - 1; i++) {
+                    tdArray[tdArray.length - 1].children[0].classList.add("d-none")
+                    tdArray[tdArray.length - 1].children[1].classList.remove("d-none")
+
+                    for (let i = 0; i < tdArray.length - 2; i++) {
                         tdArray[i].children[0].removeAttribute("readonly")
                         tdArray[i].children[0].classList.remove("form-control-plaintext")
                         tdArray[i].children[0].classList.add("form-control")
@@ -360,14 +376,18 @@ $(document).ready(() => {
                 $("#table-rows").on("click", ".save-row", (e) => {
                     let tdArray = e.currentTarget.parentElement.parentElement.children
                     let index = e.currentTarget.parentElement.parentElement.attributes.value.value
-                    let newData = {
-                        Date: tdArray[0].children[0].value,
-                        Type: tdArray[1].children[0].value,
+
+                    var updatedRow = {
+                        Category: tdArray[0].children[0].value,
+                        Date: tdArray[1].children[0].value,
                         Description: tdArray[2].children[0].value,
-                        Category: tdArray[3].children[0].value,
-                        Price: (tdArray[4].children[0].value).toString(),
+                        Price: tdArray[3].children[0].value,
+                        Quantity: tdArray[4].children[0].value,
+                        Type: tdArray[5].children[0].value,
                     }
-                    update(ref(database, 'users/' + user.uid + '/data/' + index), newData)
+
+                    tdArray[6].children[0].innerHTML = parseFloat(updatedRow["Price"]) * parseFloat(updatedRow["Quantity"])
+                    update(ref(database, 'users/' + user.uid + '/data/' + index), updatedRow)
                 })
 
                 $("#add-transaction-button").removeClass("d-none")
@@ -377,14 +397,16 @@ $(document).ready(() => {
                     let description = $("#add-transaction-description").val()
                     let date = $("#add-transaction-date").val()
                     let price = $("#add-transaction-price").val()
+                    let quantity = $("#add-transaction-quantity").val()
                     let type = $("#add-transaction-type").val()
                     
                     let row = {
-                        "Category": category,
-                        "Date": date,
-                        "Description": description,
-                        "Price": price,
-                        "Type": type
+                        Category: category,
+                        Date: date,
+                        Description: description,
+                        Price: price,
+                        Quantity : quantity,
+                        Type: type
                     }
 
                     $("#add-transaction-modal").modal("hide")

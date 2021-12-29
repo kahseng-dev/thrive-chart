@@ -37,6 +37,9 @@ body {
     cursor: -webkit-grabbing;
 }
 
-.form-control-plaintext {
-    width: min-content;
+@media only screen 
+and (max-width : 768px) {
+    .form-control-plaintext {
+        width: 8rem;
+    }
 }

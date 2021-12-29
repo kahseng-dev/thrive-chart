@@ -64,24 +64,28 @@
                                     </div>
                                     <form class="modal-body" id="add-transaction-form">
                                         <div class="mb-3">
-                                            <label for="add-transaction-date" class="form-label">Date</label>
-                                            <input type="date" class="form-control" id="add-transaction-date" required />
+                                            <label for="add-transaction-category" class="form-label">Category</label>
+                                            <input type="text" class="form-control" id="add-transaction-category" placeholder="Asset" required />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-transaction-type" class="form-label">Type</label>
-                                            <input type="text" class="form-control" id="add-transaction-type" placeholder="Income" required />
+                                            <label for="add-transaction-date" class="form-label">Date</label>
+                                            <input type="date" class="form-control" id="add-transaction-date" required />
                                         </div>
                                         <div class="mb-3">
                                             <label for="add-transaction-description" class="form-label">Description</label>
                                             <input type="text" class="form-control" id="add-transaction-description" placeholder="Hey! Today I made $50" required />
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-transaction-category" class="form-label">Category</label>
-                                            <input type="text" class="form-control" id="add-transaction-category" placeholder="Asset" required />
-                                        </div>
-                                        <div class="mb-3">
                                             <label for="add-transaction-price" class="form-label">Price</label>
                                             <input type="number" class="form-control" id="add-transaction-price" placeholder="50" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-quantity" class="form-label">Quantity</label>
+                                            <input type="number" class="form-control" id="add-transaction-quantity" placeholder="1" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-transaction-type" class="form-label">Type</label>
+                                            <input type="text" class="form-control" id="add-transaction-type" placeholder="Income" required />
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -125,11 +129,13 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr id="table-headers">
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Description</th>
                                     <th scope="col">Category</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Description</th>
                                     <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="table-rows"></tbody>

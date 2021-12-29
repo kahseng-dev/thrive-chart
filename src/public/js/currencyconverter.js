@@ -9,22 +9,31 @@ function loadDataTable(userData) {
         var htmlString = `
         <tr value="${index}">
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Date"]}" />
             </td>
             <td>
                 <input type="text" readonly class="form-control-plaintext" value="${row["Description"]}" />
             </td>
             <td>
-                <input type="text" readonly class="form-control-plaintext" value="${row["Category"]}" />
+                <input type="text" readonly class="form-control-plaintext" value="${row["Type"]}" />
             </td>
             <td>
                 <input type="text" readonly class="form-control-plaintext" value="${parseFloat(row["Price"]).toFixed(2)} ${baseCurrency}"/>
             </td>
             <td>
                 <input type="text" readonly class="form-control-plaintext" value="${(parseFloat(row["Price"]) * exchangeRate).toFixed(2)} ${convertCurrency}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${parseFloat(row["Quantity"])}"/>
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${(parseFloat(row["Price"]) * parseFloat(row["Quantity"])).toFixed(2)} ${baseCurrency}" />
+            </td>
+            <td>
+                <input type="text" readonly class="form-control-plaintext" value="${((parseFloat(row["Price"]) * parseFloat(row["Quantity"])) * exchangeRate).toFixed(2)} ${convertCurrency}" />
             </td>
         `
 

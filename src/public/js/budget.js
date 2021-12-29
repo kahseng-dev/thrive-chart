@@ -139,13 +139,13 @@ function retrieveBudgetData() {
                 if (!budgetKeys.includes(data.Type)) {
 
                     if (!foundExpenses.some(e => Object.keys(e).pop() == data.Type)) {
-                        foundExpenses.push({[data.Type]: parseFloat(data.Price)})
+                        foundExpenses.push({[data.Type]: (parseFloat(data.Price) * parseFloat(data.Quantity)) })
                     }
 
                     else {
                         foundExpenses.map((expense) => {
                             if (Object.keys(expense).pop() == data.Type) {
-                                expense[data.Type] += parseFloat(data.Price)
+                                expense[data.Type] += (parseFloat(data.Price) * parseFloat(data.Quantity))
                             }
                         })
                     }
@@ -155,8 +155,8 @@ function retrieveBudgetData() {
                     let key = Object.keys(budget).pop()
                     
                     if (data.Type == key) {
-                        budget[key] += parseFloat(data.Price)
-                        totalSpent += parseFloat(data.Price)
+                        budget[key] += (parseFloat(data.Price) * parseFloat(data.Quantity))
+                        totalSpent += (parseFloat(data.Price) * parseFloat(data.Quantity))
                     }
                 })
             }
