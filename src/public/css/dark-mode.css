@@ -31,3 +31,11 @@
   background-color: #404040 !important;
   color: #eee !important;
 }
+
+[data-theme="dark"] .text-secondary {
+  color: #60A5FA !important;
+}
+
+[data-theme="dark"] .form-control {
+  background-color: #262626 !important;
+}

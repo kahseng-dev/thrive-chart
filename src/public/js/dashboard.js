@@ -327,13 +327,19 @@ $(document).ready(() => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             onValue(ref(database, 'users/' + user.uid + '/data'), (snapshot) => {
-                const data = snapshot.val();
+                var data = snapshot.val();
+                
+                if (data != null) {
+                    loadOverview(data)
+                    loadViewDataOptions(data)
+                    loadTrackOptions(data)
+                    loadTracklist(data)
+                    loadDataTable(data, true)
+                }
 
-                loadOverview(data)
-                loadViewDataOptions(data)
-                loadTrackOptions(data)
-                loadTracklist(data)
-                loadDataTable(data, true)
+                else {
+                    data = []
+                }
 
                 $(".view-data-list").on("click", ".view-data-option", (e) => {
                     let type = e.currentTarget.attributes[1].value
@@ -391,6 +397,7 @@ $(document).ready(() => {
                 })
 
                 $("#add-transaction-button").removeClass("d-none")
+
                 $("#add-transaction-form").on("submit", function(e) {
                     e.preventDefault()
                     let category = $("#add-transaction-category").val()
