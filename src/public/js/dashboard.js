@@ -43,6 +43,10 @@ function loadOverview(data) {
                 }]
             }
         })
+
+        $("#kpi-assets").text(totalAssets)
+        $("#kpi-liabilities").text(totalLiabilities)
+        $("#kpi-net-worth").text(totalAssets - totalLiabilities)
     }
 }
 
