@@ -457,7 +457,7 @@ $(document).ready(() => {
             $("#real-upload-button").on("change", (e) => {
                 let reader = new FileReader();
                 let selectedFile = e.target.files[0]
-        
+
                 if (selectedFile) {
                     reader.readAsBinaryString(selectedFile)
                     reader.onload = (e) => {
@@ -465,7 +465,9 @@ $(document).ready(() => {
                         let firstSheetName = workbook.SheetNames[0]
                         let worksheet = workbook.Sheets[firstSheetName]
                         let data = XLSX.utils.sheet_to_json(worksheet, { raw: false })
-        
+
+                        $("#line-graph-container").hide()
+
                         loadOverview(data)
                         loadViewDataOptions(data)
                         loadTrackOptions(data)
@@ -498,6 +500,8 @@ $(document).ready(() => {
                             removeFromSavedTracklist(e)
                         })
                     }
+                    
+                    $("#real-upload-button").replaceWith($("#real-upload-button").val('').clone(true))
                 }
             })
         }
